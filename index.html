@@ -26,6 +26,7 @@ font-family:'Playfair Display', serif;
 font-size:48px;
 margin: 0 0 15px 0;
 color: #2c2c2c;
+letter-spacing: -0.5px;
 }
 
 /* Aesthetic Countdown Styles */
@@ -33,11 +34,13 @@ color: #2c2c2c;
 display: inline-flex;
 gap: 20px;
 font-family: 'Patrick Hand', cursive;
-background: rgba(255, 255, 255, 0.6);
-padding: 10px 25px;
+background: rgba(255, 255, 255, 0.65);
+padding: 12px 28px;
 border-radius: 30px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-backdrop-filter: blur(4px);
+box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+backdrop-filter: blur(8px);
+-webkit-backdrop-filter: blur(8px);
+border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .countdown-item {
@@ -48,14 +51,14 @@ min-width: 50px;
 }
 
 .countdown-number {
-font-size: 28px;
+font-size: 30px;
 font-weight: bold;
-color: #c89f7b; /* Matches your 'Pin Memory' button color */
+color: #c89f7b;
 line-height: 1;
 }
 
 .countdown-label {
-font-size: 14px;
+font-size: 13px;
 color: #71717a;
 text-transform: uppercase;
 letter-spacing: 1px;
@@ -71,79 +74,149 @@ min-height:2500px;
 .note{
 position:absolute;
 width:230px;
-padding:10px 10px 35px;
+padding:12px 12px 30px;
 background:white;
-box-shadow:0 10px 25px rgba(0,0,0,.18);
-border-radius:4px;
-transition:.35s;
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+border-radius:2px;
+transition: transform .4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow .4s ease;
+will-change: transform;
 }
 
 .note:hover{
 transform:scale(1.08) rotate(0deg)!important;
 z-index:10;
-box-shadow:0 18px 40px rgba(0,0,0,.35);
+box-shadow:0 20px 38px rgba(0,0,0,.24);
 }
 
 .note img{
 width: 100%;
 height: 180px;
-object-fit: contain; /* Kept your preference to fit the whole image */
-background: #fcfcfc; 
-border-radius: 2px;
+object-fit: contain;
+background: radial-gradient(#fdfdfd, #fafafa);
+border-radius: 1px;
+display: block;
 }
 
 .message{
 text-align:center;
-margin-top:15px;
-line-height:1.2;
+margin-top:14px;
+line-height:1.3;
+padding: 0 4px;
+word-wrap: break-word;
 }
 
 .username{
-font-size:20px;
+font-size:18px;
 margin-bottom:6px;
+opacity: 0.9;
 }
 
+/* Glassmorphic Form Pin-Box Container */
 .post-box{
 position:fixed;
-bottom:20px;
+bottom:24px;
 left:50%;
 transform:translateX(-50%);
-background:white;
-padding:15px;
-border-radius:15px;
-box-shadow:0 8px 30px rgba(0,0,0,.2);
+background: rgba(255, 255, 255, 0.85);
+padding:12px 18px;
+border-radius:20px;
+box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid rgba(255, 255, 255, 0.5);
 z-index:100;
 display:flex;
-gap:10px;
+gap:12px;
 align-items:center;
 }
 
 textarea{
 width:240px;
-height:55px;
-border:none;
-background:#f6f6f6;
-border-radius:8px;
-padding:8px;
+height:44px;
+border:1px solid rgba(0,0,0,0.05);
+background: rgba(246, 246, 246, 0.7);
+border-radius:10px;
+padding:10px;
 resize:none;
+font-family: inherit;
+font-size: 14px;
+outline: none;
+transition: background 0.2s;
 }
 
 input[type="text"]{
-padding:8px;
-border:none;
-border-radius:8px;
-background:#f6f6f6;
-width:160px;
+padding:10px;
+border:1px solid rgba(0,0,0,0.05);
+border-radius:10px;
+background: rgba(246, 246, 246, 0.7);
+width:140px;
+font-family: inherit;
+font-size: 14px;
+outline: none;
+transition: background 0.2s;
+}
+
+textarea:focus, input[type="text"]:focus {
+background: #ffffff;
+border-color: rgba(200, 159, 123, 0.4);
+}
+
+/* Custom File Upload Styling wrapper */
+.file-upload-wrapper {
+position: relative;
+display: inline-block;
+cursor: pointer;
+}
+
+.file-upload-label {
+display: flex;
+align-items: center;
+justify-content: center;
+background: rgba(246, 246, 246, 0.7);
+border: 1px solid rgba(0,0,0,0.05);
+padding: 10px 14px;
+border-radius: 10px;
+font-size: 14px;
+font-weight: 500;
+color: #555;
+transition: all 0.2s;
+}
+
+.file-upload-wrapper:hover .file-upload-label {
+background: #ffffff;
+border-color: rgba(200, 159, 123, 0.3);
+}
+
+.file-upload-wrapper input[type="file"] {
+position: absolute;
+left: 0;
+top: 0;
+opacity: 0;
+width: 100%;
+height: 100%;
+cursor: pointer;
 }
 
 button{
-padding:10px 18px;
+padding:11px 22px;
 border:none;
-border-radius:20px;
+border-radius:12px;
 background:#c89f7b;
 color:white;
-font-weight:bold;
+font-size: 14px;
+font-weight:600;
 cursor:pointer;
+transition: background 0.2s, transform 0.1s;
+box-shadow: 0 4px 12px rgba(200, 159, 123, 0.2);
+}
+
+button:hover {
+background: #b88f6b;
+transform: translateY(-1px);
+}
+
+button:active {
+transform: translateY(0);
 }
 </style>
 </head>
@@ -151,35 +224,40 @@ cursor:pointer;
 <body>
 
 <div class="header-container">
-  <h1 class="title">Richa's Birthday Wall ✨</h1>
-  
-  <div class="countdown-container">
-    <div class="countdown-item">
-      <span class="countdown-number" id="days">00</span>
-      <span class="countdown-label">Days</span>
-    </div>
-    <div class="countdown-item">
-      <span class="countdown-number" id="hours">00</span>
-      <span class="countdown-label">Hours</span>
-    </div>
-    <div class="countdown-item">
-      <span class="countdown-number" id="minutes">00</span>
-      <span class="countdown-label">Mins</span>
-    </div>
-    <div class="countdown-item">
-      <span class="countdown-number" id="seconds">00</span>
-      <span class="countdown-label">Secs</span>
-    </div>
-  </div>
+  <h1 class="title">Richa's Birthday Wall ✨</h1>
+  
+  <div class="countdown-container">
+    <div class="countdown-item">
+      <span class="countdown-number" id="days">00</span>
+      <span class="countdown-label">Days</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-number" id="hours">00</span>
+      <span class="countdown-label">Hours</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-number" id="minutes">00</span>
+      <span class="countdown-label">Mins</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-number" id="seconds">00</span>
+      <span class="countdown-label">Secs</span>
+    </div>
+  </div>
 </div>
 
 <div id="wall"></div>
 
 <div class="post-box">
-<input id="username" type="text" placeholder="Your name ❤️">
-<textarea id="message" placeholder="Leave a memory..."></textarea>
-<input type="file" id="imageInput">
-<button onclick="addPost()">Pin Memory</button>
+  <input id="username" type="text" placeholder="Your name ❤️">
+  <textarea id="message" placeholder="Leave a memory..."></textarea>
+  
+  <div class="file-upload-wrapper">
+    <div class="file-upload-label" id="uploadLabel">📸 Photo</div>
+    <input type="file" id="imageInput" onchange="updateFileName(this)">
+  </div>
+  
+  <button onclick="addPost()">Pin Memory</button>
 </div>
 
 <script>
@@ -187,12 +265,12 @@ cursor:pointer;
 /* ================= FIREBASE INIT ================= */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC6SCVxBj8e1erraHSZYNIbUQ9rd_ZIVqE",
-  authDomain: "birthdaywall-5c717.firebaseapp.com",
-  projectId: "birthdaywall-5c717",
-  storageBucket: "birthdaywall-5c717.firebasestorage.app",
-  messagingSenderId: "690240797364",
-  appId: "1:690240797364:web:e6863fa5ac7bcecaac75e1"
+  apiKey: "AIzaSyC6SCVxBj8e1erraHSZYNIbUQ9rd_ZIVqE",
+  authDomain: "birthdaywall-5c717.firebaseapp.com",
+  projectId: "birthdaywall-5c717",
+  storageBucket: "birthdaywall-5c717.firebasestorage.app",
+  messagingSenderId: "690240797364",
+  appId: "1:690240797364:web:e6863fa5ac7bcecaac75e1"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -238,42 +316,48 @@ placed.push({x,y});
 return{x,y};
 }
 
-  /* ===== AESTHETIC COUNTDOWN TIMER ===== */
+/* ===== AESTHETIC COUNTDOWN TIMER ===== */
 
-// Set target date to May 24, 2026 00:00:00
 const targetDate = new Date("May 24, 2026 00:00:00").getTime();
 
 const countdownInterval = setInterval(function() {
-  const now = new Date().getTime();
-  const difference = targetDate - now;
+  const now = new Date().getTime();
+  const difference = targetDate - now;
 
-  // Time calculations for days, hours, minutes, and seconds
-  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-  // If the countdown is running, display values
-  if (difference > 0) {
-    document.getElementById("days").innerText = days.toString().padStart(2, '0');
-    document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-    document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-    document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-  } else {
-    // What happens when the countdown hits zero
-    clearInterval(countdownInterval);
-    document.querySelector(".countdown-container").innerHTML = `
-      <div class="countdown-number" style="font-size: 24px; padding: 5px 15px;">
-        🎉 Happy Birthday, Richa! 🎂
-      </div>
-    `;
-  }
+  if (difference > 0) {
+    document.getElementById("days").innerText = days.toString().padStart(2, '0');
+    document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+    document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+    document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+  } else {
+    clearInterval(countdownInterval);
+    document.querySelector(".countdown-container").innerHTML = `
+      <div class="countdown-number" style="font-size: 24px; padding: 5px 15px;">
+        🎉 Happy Birthday, Richa! 🎂
+      </div>
+    `;
+  }
 }, 1000);
+
+function updateFileName(input) {
+  const label = document.getElementById("uploadLabel");
+  if(input.files && input.files[0]) {
+    label.innerText = "✅ Added";
+    label.style.borderColor = "rgba(200, 159, 123, 0.4)";
+  } else {
+    label.innerText = "📸 Photo";
+  }
+}
 
 function createNote(text,imageURL){
 
 const note=document.createElement("div");
-note.className="note"; // Removed 'firebase-note' tag from initial photos to keep them permanent
+note.className="note";
 
 const rotate=(Math.random()*12)-6;
 note.style.transform=`rotate(${rotate}deg)`;
@@ -288,7 +372,7 @@ const pos=randomPosition();
 note.style.left=pos.x+"px";
 note.style.top=pos.y+"px";
 
-const size=18+Math.random()*8;
+const size=18+Math.random()*6;
 const color=inkColors[Math.floor(Math.random()*inkColors.length)];
 
 const content=`
@@ -304,31 +388,30 @@ note.innerHTML=imageURL
 document.getElementById("wall").appendChild(note);
 }
 
-// Separate function for rendering firebase-specific notes so we can safely wipe them on snapshot reload
 function createFirebaseNote(text,imageURL){
-  const note=document.createElement("div");
-  note.className="note firebase-note"; // Uses firebase-note class here so they can be cleaned on updates
+  const note=document.createElement("div");
+  note.className="note firebase-note";
 
-  const rotate=(Math.random()*12)-6;
-  note.style.transform=`rotate(${rotate}deg)`;
-  note.style.fontFamily=fonts[Math.floor(Math.random()*fonts.length)];
-  note.style.background=paperColors[Math.floor(Math.random()*paperColors.length)];
+  const rotate=(Math.random()*12)-6;
+  note.style.transform=`rotate(${rotate}deg)`;
+  note.style.fontFamily=fonts[Math.floor(Math.random()*fonts.length)];
+  note.style.background=paperColors[Math.floor(Math.random()*paperColors.length)];
 
-  const pos=randomPosition();
-  note.style.left=pos.x+"px";
-  note.style.top=pos.y+"px";
+  const pos=randomPosition();
+  note.style.left=pos.x+"px";
+  note.style.top=pos.y+"px";
 
-  const size=18+Math.random()*8;
-  const color=inkColors[Math.floor(Math.random()*inkColors.length)];
+  const size=18+Math.random()*6;
+  const color=inkColors[Math.floor(Math.random()*inkColors.length)];
 
-  const content=`
-  <div class="message" style="font-size:${size}px;color:${color};">
-  ${text}
-  </div>
-  `;
+  const content=`
+  <div class="message" style="font-size:${size}px;color:${color};">
+  ${text}
+  </div>
+  `;
 
-  note.innerHTML=imageURL ? `<img src="${imageURL}">${content}` : content;
-  document.getElementById("wall").appendChild(note);
+  note.innerHTML=imageURL ? `<img src="${imageURL}">${content}` : content;
+  document.getElementById("wall").appendChild(note);
 }
 
 /* ===== ADD POST ===== */
@@ -350,7 +433,6 @@ reader.readAsDataURL(file);
 });
 }
 
-// Saves straight to database with approved set to false
 await db.collection("messages").add({
 name:name,
 message:msg,
@@ -364,6 +446,7 @@ alert("✨ Your memory has been sent for approval!");
 document.getElementById("username").value="";
 document.getElementById("message").value="";
 document.getElementById("imageInput").value="";
+document.getElementById("uploadLabel").innerText = "📸 Photo";
 }
 
 /* ===== INITIAL PHOTOS ===== */
@@ -387,26 +470,26 @@ const initialPhotos=[
 ];
 
 const birthdayMessages = [
-    "🎉 Happy Birthday Richa! May your smile stay forever ❤️",
-    "🥳 Another year prettier, wiser & more amazing!",
-    "🎂 Officially upgraded to a new level of awesome!",
-    "✨ You make life brighter just by existing.",
-    "😂 Warning: Cake calories don’t count today!",
-    "🌸 Stay magical, stay beautiful, stay YOU.",
-    "💖 Today the world celebrates its favorite person!",
-    "🎈 Born to shine, destined to slay!",
-    "🍰 Eat cake. Repeat. It’s your birthday.",
-    "❤️ You deserve happiness multiplied by infinity.",
-    "🎊 May your day be full of surprises & laughter!",
-    "🌟 Still younger than you’ll be next year 😄",
-    "🎁 Happiness looks good on you!",
-    "💫 Keep glowing like the star you are.",
-    "🥰 Life feels better because you’re in it.",
-    "🎉 Happy Birthday Queen! Rule your day 👑"
+    "🎉 Happy Birthday Richa! May your smile stay forever ❤️",
+    "🥳 Another year prettier, wiser & more amazing!",
+    "🎂 Officially upgraded to a new level of awesome!",
+    "✨ You make life brighter just by existing.",
+    "😂 Warning: Cake calories don’t count today!",
+    "🌸 Stay magical, stay beautiful, stay YOU.",
+    "💖 Today the world celebrates its favorite person!",
+    "🎈 Born to shine, destined to slay!",
+    "🍰 Eat cake. Repeat. It’s your birthday.",
+    "❤️ You deserve happiness multiplied by infinity.",
+    "🎊 May your day be full of surprises & laughter!",
+    "🌟 Still younger than you’ll be next year 😄",
+    "🎁 Happiness looks good on you!",
+    "💫 Keep glowing like the star you are.",
+    "🥰 Life feels better because you’re in it.",
+    "🎉 Happy Birthday Queen! Rule your day 👑"
 ];
 
 initialPhotos.forEach((url, index) => {
-    createNote(birthdayMessages[index], url);
+    createNote(birthdayMessages[index], url);
 });
 
 /* ===== LOAD APPROVED POSTS ===== */
@@ -416,11 +499,9 @@ db.collection("messages")
 .orderBy("timestamp","asc")
 .onSnapshot(snapshot=>{
 
-// Wipe out only dynamically loaded database notes to avoid duplicate overlaps
 document.querySelectorAll(".firebase-note")
 .forEach(n=>n.remove());
 
-// Reset placement coordinates tracking array back to initial hardcoded photos layout size
 placed = placed.slice(0, initialPhotos.length);
 
 snapshot.forEach(doc=>{
