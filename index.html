@@ -1,117 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Richa's Birthday Wall ✨</title>
+<meta charset="UTF-8">
+<title>Birthday Wall 🎂</title>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Caveat&family=Indie+Flower&family=Patrick+Hand&family=Shadows+Into+Light&family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat&family=Patrick+Hand&family=Indie+Flower&display=swap" rel="stylesheet">
 
 <style>
 
-/* ---------------- PAGE ---------------- */
-
 body{
 margin:0;
-background:#f3efe8;
+background:transparent;
+font-family:sans-serif;
 overflow-x:hidden;
 }
 
-.title{
-text-align:center;
-font-family:'Playfair Display';
-font-size:48px;
-margin:40px 0;
+/* ===== ROPE ===== */
+
+.rope{
+position:fixed;
+top:40px;
+left:0;
+width:100%;
+height:2px;
+background:black;
+z-index:5;
 }
 
-/* ---------------- WALL ---------------- */
+.hanging{
+position:fixed;
+top:42px;
+display:flex;
+gap:30px;
+width:100%;
+justify-content:center;
+z-index:6;
+}
 
-#wall{
+.hanging img{
+height:120px;
+transform:rotate(-3deg);
+box-shadow:0 6px 12px rgba(0,0,0,.3);
+}
+
+/* ===== WALL ===== */
+
+.wall{
 position:relative;
 width:100%;
-min-height:2500px;
+height:3000px;
 }
 
-/* ---------------- POLAROID ---------------- */
+/* ===== POLAROID ===== */
+
+.polaroid{
+position:absolute;
+width:220px;
+background:white;
+padding:10px;
+padding-bottom:40px;
+box-shadow:0 10px 20px rgba(0,0,0,.25);
+border-radius:4px;
+transition:.3s;
+}
+
+.polaroid:hover{
+transform:scale(1.08);
+z-index:10;
+}
+
+.polaroid img{
+width:100%;
+}
 
 .note{
-position:absolute;
-width:230px;
-padding:10px 10px 35px;
-background:white;
-box-shadow:0 10px 25px rgba(0,0,0,.18);
-border-radius:4px;
-transition:.35s;
-}
-
-.note:hover{
-transform:scale(1.08) rotate(0deg)!important;
-z-index:10;
-box-shadow:0 18px 40px rgba(0,0,0,.35);
-}
-
-.note img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:2px;
-}
-
-/* handwriting */
-.message{
-text-align:center;
-margin-top:15px;
-line-height:1.2;
-}
-
-.username{
+margin-top:8px;
 font-size:20px;
-margin-bottom:6px;
+white-space:pre-line;
 }
 
-/* ---------------- POST BOX ---------------- */
+/* ===== MESSAGE BOX ===== */
 
-.post-box{
+.formBox{
 position:fixed;
-bottom:20px;
+top:120px;
 left:50%;
 transform:translateX(-50%);
 background:white;
-padding:15px;
-border-radius:15px;
-box-shadow:0 8px 30px rgba(0,0,0,.2);
-z-index:100;
-display:flex;
-gap:10px;
-align-items:center;
+padding:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.2);
+z-index:10;
+border-radius:10px;
 }
 
-textarea{
-width:240px;
-height:55px;
-border:none;
-background:#f6f6f6;
-border-radius:8px;
+input,textarea{
+width:250px;
+margin-top:10px;
 padding:8px;
-resize:none;
-}
-
-input[type="text"]{
-padding:8px;
-border:none;
-border-radius:8px;
-background:#f6f6f6;
-width:160px;
 }
 
 button{
-padding:10px 18px;
-border:none;
-border-radius:20px;
-background:#c89f7b;
-color:white;
-font-weight:bold;
+margin-top:10px;
+padding:10px;
 cursor:pointer;
 }
 
@@ -120,205 +110,121 @@ cursor:pointer;
 
 <body>
 
-<h1 class="title">Richa's Birthday Wall ✨</h1>
+<div class="rope"></div>
 
-<div id="wall"></div>
-
-<!-- POST BOX -->
-
-<div class="post-box">
-<input id="username" placeholder="Your name ❤️">
-<textarea id="message" placeholder="Leave a memory..."></textarea>
-<input type="file" id="imageInput">
-<button onclick="addPost()">Pin Memory</button>
+<div class="hanging">
+<img src="img1.jpg">
+<img src="img2.jpg">
+<img src="img3.jpg">
 </div>
+
+<div class="formBox">
+<h3>Leave a Birthday Message 🎂</h3>
+
+<input id="name" placeholder="Your Name">
+<br>
+<textarea id="message" placeholder="Write something beautiful..."></textarea>
+<br>
+<button onclick="submitMessage()">Send ❤️</button>
+
+<p id="status"></p>
+
+</div>
+
+<div class="wall" id="wall"></div>
+
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
 
-/* ---------- HANDWRITING SYSTEM ---------- */
+/* ===== PASTE YOUR FIREBASE CONFIG HERE ===== */
 
-const fonts=[
+const firebaseConfig = {
+ apiKey: "PASTE",
+ authDomain: "PASTE",
+ projectId: "PASTE",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ===== RANDOM STYLE HELPERS ===== */
+
+const fonts = [
 "Caveat",
-"Indie Flower",
 "Patrick Hand",
-"Shadows Into Light",
-"Gloria Hallelujah"
+"Indie Flower"
 ];
 
-const inkColors=[
-"#1f2937",
-"#1e3a8a",
-"#14532d",
-"#7f1d1d",
-"#312e81",
-"#3f3f46"
-];
-
-const paperColors=[
-"#fffdfa",
-"#fef9f3",
-"#fff7ed",
-"#fafaf9",
-"#f8fafc"
-];
-
-let placed=[];
-
-/* prevent overlapping */
-
-function overlaps(x,y){
-for(let p of placed){
-if(Math.abs(p.x-x)<260 && Math.abs(p.y-y)<260){
-return true;
-}
-}
-return false;
+function random(min,max){
+return Math.random()*(max-min)+min;
 }
 
-function randomPosition(){
+/* ===== CREATE POLAROID ===== */
 
-let x,y,tries=0;
+function createPolaroid(data){
 
-do{
-x=Math.random()*(window.innerWidth-260);
-y=Math.random()*2000+50;
-tries++;
-if(tries>100)break;
-}while(overlaps(x,y));
+const wall = document.getElementById("wall");
 
-placed.push({x,y});
-return{x,y};
-}
+const div = document.createElement("div");
+div.className="polaroid";
 
-/* ---------- CREATE NOTE ---------- */
+div.style.top=random(200,2800)+"px";
+div.style.left=random(5,80)+"%";
+div.style.transform=`rotate(${random(-12,12)}deg)`;
 
-function createNote(text,imageURL){
-
-const note=document.createElement("div");
-note.className="note";
-
-/* random rotation */
-const rotate=(Math.random()*12)-6;
-note.style.transform=`rotate(${rotate}deg)`;
-
-/* random handwriting */
-note.style.fontFamily=
-fonts[Math.floor(Math.random()*fonts.length)];
-
-/* random paper */
-note.style.background=
-paperColors[Math.floor(Math.random()*paperColors.length)];
-
-const pos=randomPosition();
-note.style.left=pos.x+"px";
-note.style.top=pos.y+"px";
-
-/* handwriting realism */
-const size=18+Math.random()*8;
-const color=inkColors[Math.floor(Math.random()*inkColors.length)];
-
-const content=`
-<div class="message" style="
-font-size:${size}px;
-color:${color};
-">
-${text}
+div.innerHTML=`
+<div class="note"
+style="font-family:${fonts[Math.floor(Math.random()*fonts.length)]}">
+<b>${data.name} said —</b>
+${data.message}
 </div>
 `;
 
-if(imageURL){
-note.innerHTML=`<img src="${imageURL}">${content}`;
-}else{
-note.innerHTML=content;
+wall.appendChild(div);
 }
 
-document.getElementById("wall").appendChild(note);
-}
+/* ===== LOAD APPROVED MESSAGES ===== */
 
-/* ---------- ADD POST ---------- */
-
-function addPost(){
-
-const name=document.getElementById("username").value||"Someone";
-const msg=document.getElementById("message").value;
-const file=document.getElementById("imageInput").files[0];
-
-if(!msg && !file)return;
-
-const finalText=`
-<div class="username"><b>${name}</b> said —</div>
-${msg}
-`;
-
-if(file){
-
-const reader=new FileReader();
-
-reader.onload=e=>{
-createNote(finalText,e.target.result);
-};
-
-reader.readAsDataURL(file);
-
-}else{
-createNote(finalText,null);
-}
-
-document.getElementById("message").value="";
-document.getElementById("imageInput").value="";
-}
-
-/* ---------- INITIAL RANDOM MEMORY PHOTOS ---------- */
-
-const initialPhotos=[
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2025-01-14-13-49-01_alcwm6.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2025-09-12-23-34-13_dypg9e.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2025-09-12-23-46-33_s6tsra.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2025-10-14-14-46-27_sigzy1.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2026-05-10-01-45-09_o8tdaa.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137977/PHOTO-2025-05-25-00-15-51_oba8u3.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137977/PHOTO-2025-09-20-20-40-37_rcdxaq.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137977/PHOTO-2024-07-28-19-48-58_aosx29.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137976/PHOTO-2024-02-12-12-15-34_qnjgz7.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137976/PHOTO-2023-12-24-19-56-07_me8bhs.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137976/PHOTO-2024-02-04-20-37-44_dvytnh.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137976/PHOTO-2023-06-02-21-20-49_wcim7q.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137975/PHOTO-2022-04-09-08-08-36_bth7fs.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137975/PHOTO-2022-06-06-11-54-13_eho77m.jpg",
-"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137975/PHOTO-2023-12-10-15-41-11_zysraq.jpg"
-
-];
-
-/* scatter photos on wall */
-
-initialPhotos.forEach(url=>{
-createNote("❤️ Memory",url);
+db.collection("messages")
+.where("approved","==",true)
+.orderBy("timestamp","asc")
+.onSnapshot(snapshot=>{
+document.getElementById("wall").innerHTML="";
+snapshot.forEach(doc=>{
+createPolaroid(doc.data());
+});
 });
 
-</script>
+/* ===== SUBMIT MESSAGE ===== */
 
-  <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+function submitMessage(){
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyC6SCVxBj8e1erraHSZYNIbUQ9rd_ZIVqE",
-    authDomain: "birthdaywall-5c717.firebaseapp.com",
-    projectId: "birthdaywall-5c717",
-    storageBucket: "birthdaywall-5c717.firebasestorage.app",
-    messagingSenderId: "690240797364",
-    appId: "1:690240797364:web:e6863fa5ac7bcecaac75e1",
-    measurementId: "G-8MYRPN4FW0"
-  };
+const name=document.getElementById("name").value.trim();
+const message=document.getElementById("message").value.trim();
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+if(!name || !message){
+alert("Fill everything ❤️");
+return;
+}
+
+db.collection("messages").add({
+name,
+message,
+approved:false,
+timestamp:Date.now()
+});
+
+document.getElementById("status").innerText=
+"✨ Message sent! Waiting for approval.";
+
+document.getElementById("name").value="";
+document.getElementById("message").value="";
+}
+
 </script>
 
 </body>
