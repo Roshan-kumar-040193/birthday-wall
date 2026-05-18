@@ -1,13 +1,107 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Birthday Wall 🎂</title>
+  <title>Happy Birthday Richa 🎉</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #fff5f7;
+      text-align: center;
+      margin: 0;
+    }
+
+    h1 {
+      color: #ff4081;
+    }
+
+    #countdown {
+      font-size: 28px;
+      margin: 20px;
+      font-weight: bold;
+    }
+
+    #postBox {
+      margin: 20px;
+    }
+
+    textarea {
+      width: 60%;
+      height: 80px;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #timeline {
+      width: 60%;
+      margin: auto;
+    }
+
+    .post {
+      background: white;
+      padding: 15px;
+      margin: 10px;
+      border-radius: 12px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+  </style>
 </head>
 
-<body style="text-align:center;font-family:Arial">
+<body>
 
-<h1>🎉 Birthday Wall 🎉</h1>
-<p>Setup successful!</p>
+<h1>🎂 Happy Birthday Richa 🎂</h1>
+
+<div id="countdown"></div>
+
+<div id="postBox">
+  <textarea id="message" placeholder="Write a birthday message..."></textarea>
+  <br><br>
+  <button onclick="addPost()">Post</button>
+</div>
+
+<div id="timeline"></div>
+
+<script>
+
+const birthday = new Date("May 24, 2026 00:00:00");
+
+setInterval(() => {
+  const now = new Date();
+  const diff = birthday - now;
+
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff/(1000*60*60))%24);
+  const mins = Math.floor((diff/(1000*60))%60);
+  const secs = Math.floor((diff/1000)%60);
+
+  document.getElementById("countdown").innerText =
+    `${days}d ${hours}h ${mins}m ${secs}s left 🎉`;
+},1000);
+
+function addPost(){
+  const text = document.getElementById("message").value;
+
+  if(!text) return;
+
+  const post = document.createElement("div");
+  post.className="post";
+  post.innerText=text;
+
+  document.getElementById("timeline").prepend(post);
+
+  document.getElementById("message").value="";
+}
+
+</script>
 
 </body>
 </html>
