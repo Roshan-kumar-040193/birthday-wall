@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Happy Birthday Richa</title>
+<title>Richa</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@300;500&display=swap" rel="stylesheet">
 
@@ -13,92 +13,86 @@ body{
 margin:0;
 font-family:'Inter',sans-serif;
 background:#F5EFE6;
-color:#2B2B2B;
+color:#2b2b2b;
+overflow-x:hidden;
 }
 
-/* BOHO TEXTURE BACKGROUND */
 body::before{
 content:"";
 position:fixed;
-top:0;
-left:0;
 width:100%;
 height:100%;
 background:url("https://www.transparenttextures.com/patterns/cream-paper.png");
 opacity:.4;
-z-index:-1;
+z-index:-2;
 }
 
 /* HERO */
 
 .hero{
-padding:80px 20px 40px;
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
 text-align:center;
+background:
+linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2)),
+url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e");
+background-size:cover;
+background-position:center;
+color:white;
+animation:zoom 20s infinite alternate;
 }
 
-h1{
-font-family:'Playfair Display',serif;
-font-size:56px;
-letter-spacing:2px;
-margin-bottom:10px;
+@keyframes zoom{
+from{background-size:100%;}
+to{background-size:110%;}
 }
 
-.subtitle{
-color:#8B5E3C;
-font-size:18px;
+.hero h1{
+font-family:'Playfair Display';
+font-size:72px;
+letter-spacing:3px;
 }
 
 #countdown{
-margin-top:15px;
 font-size:22px;
+margin-top:15px;
 }
 
-/* SECTION */
+/* SECTIONS */
 
 .section{
-max-width:1000px;
+max-width:1100px;
 margin:auto;
-padding:40px 20px;
+padding:80px 20px;
+opacity:0;
+transform:translateY(40px);
+transition:1s;
 }
 
-/* CAROUSEL */
-
-.carousel{
-position:relative;
-overflow:hidden;
-border-radius:16px;
-}
-
-.slides{
-display:flex;
-transition:transform 1s ease;
-}
-
-.slides img{
-width:100%;
-height:520px;
-object-fit:cover;
-}
-
-/* DOTS */
-
-.dots{
-text-align:center;
-margin-top:10px;
-}
-
-.dot{
-height:8px;
-width:8px;
-margin:5px;
-display:inline-block;
-background:#C97C5D;
-border-radius:50%;
-opacity:.4;
-}
-
-.active{
+.section.show{
 opacity:1;
+transform:none;
+}
+
+/* MASONRY GALLERY */
+
+.gallery{
+column-count:3;
+column-gap:15px;
+}
+
+.gallery img{
+width:100%;
+margin-bottom:15px;
+border-radius:14px;
+transition:.4s;
+}
+
+.gallery img:hover{
+transform:scale(1.03);
 }
 
 /* MESSAGE WALL */
@@ -106,18 +100,16 @@ opacity:1;
 .wall{
 background:#FAF7F2;
 padding:30px;
-border-radius:16px;
-box-shadow:0 10px 30px rgba(0,0,0,.08);
+border-radius:20px;
+box-shadow:0 15px 40px rgba(0,0,0,.08);
 }
 
 textarea{
 width:100%;
 height:90px;
 border:none;
-background:#fff;
 padding:12px;
 border-radius:10px;
-font-size:15px;
 }
 
 button{
@@ -129,6 +121,8 @@ color:white;
 border-radius:30px;
 cursor:pointer;
 }
+
+/* POSTS */
 
 .post{
 background:white;
@@ -142,13 +136,34 @@ animation:fade .5s ease;
 from{opacity:0;transform:translateY(15px);}
 }
 
-/* FOOTER */
+/* BIRTHDAY OVERLAY */
 
-footer{
+#birthdayOverlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#F5EFE6;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+opacity:0;
+pointer-events:none;
+transition:2s;
+z-index:10;
+}
+
+#birthdayOverlay.show{
+opacity:1;
+pointer-events:auto;
+}
+
+.overlayText{
+font-family:'Playfair Display';
+font-size:48px;
 text-align:center;
-padding:50px;
-color:#8B5E3C;
-font-size:14px;
 }
 
 </style>
@@ -159,16 +174,16 @@ font-size:14px;
 <!-- HERO -->
 <div class="hero">
 <h1>Richa</h1>
-<div class="subtitle">a day worth celebrating ✨</div>
 <div id="countdown"></div>
 </div>
 
-<!-- CAROUSEL -->
+<!-- MEMORIES -->
 <div class="section">
+<h2>Memories</h2>
 
-<div class="carousel">
-<div class="slides" id="slides">
+<div class="gallery">
 
+<!-- ADD MANY PHOTOS -->
 <img src="https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2025-01-14-13-49-01_alcwm6.jpg">
 <img src="https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2025-09-12-23-34-13_dypg9e.jpg">
 <img src="https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2025-09-12-23-46-33_s6tsra.jpg">
@@ -188,32 +203,29 @@ font-size:14px;
 </div>
 </div>
 
-<div class="dots" id="dots"></div>
-
-</div>
-
 <!-- WALL -->
 <div class="section">
-
 <div class="wall">
 
 <h2>Birthday Wall</h2>
 
-<textarea id="message" placeholder="Leave a memory..."></textarea>
+<textarea id="message" placeholder="Leave something beautiful..."></textarea>
 <button onclick="addPost()">Post</button>
 
 <div id="timeline"></div>
 
 </div>
-
 </div>
 
-<footer>
-made with love
-</footer>
+<!-- OVERLAY -->
+<div id="birthdayOverlay">
+<div class="overlayText">
+Happy Birthday ❤️<br>
+You make life beautiful.
+</div>
+</div>
 
-<!-- AUDIO -->
-<audio id="birthdayMusic" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4c3b92b62e.mp3"></audio>
+<audio id="music" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4c3b92b62e.mp3"></audio>
 
 <script>
 
@@ -231,48 +243,22 @@ const m=Math.floor((diff/(1000*60))%60);
 const s=Math.floor((diff/1000)%60);
 
 document.getElementById("countdown").innerText=
-`${d} days ${h} hrs ${m} mins ${s} sec`;
+`${d}d ${h}h ${m}m ${s}s`;
 },1000);
 
 
-/* PLAY MUSIC ON MAY 24 */
+/* SCROLL REVEAL */
 
-const today=new Date();
+const sections=document.querySelectorAll(".section");
 
-if(today.getDate()==24 && today.getMonth()==4){
-document.getElementById("birthdayMusic").play();
+window.addEventListener("scroll",()=>{
+sections.forEach(sec=>{
+const top=sec.getBoundingClientRect().top;
+if(top<window.innerHeight-100){
+sec.classList.add("show");
 }
-
-
-/* CAROUSEL */
-
-let index=0;
-const slides=document.getElementById("slides");
-const dotsContainer=document.getElementById("dots");
-
-const total=slides.children.length;
-
-for(let i=0;i<total;i++){
-const dot=document.createElement("span");
-dot.className="dot";
-dotsContainer.appendChild(dot);
-}
-
-const dots=document.querySelectorAll(".dot");
-
-function showSlide(){
-slides.style.transform=`translateX(-${index*100}%)`;
-
-dots.forEach(d=>d.classList.remove("active"));
-dots[index].classList.add("active");
-}
-
-setInterval(()=>{
-index=(index+1)%total;
-showSlide();
-},5000);
-
-showSlide();
+});
+});
 
 
 /* POSTS */
@@ -287,6 +273,31 @@ post.innerText=text;
 
 document.getElementById("timeline").prepend(post);
 document.getElementById("message").value="";
+}
+
+
+/* BIRTHDAY MIDNIGHT EXPERIENCE */
+
+const today=new Date();
+
+if(today.getDate()==24 && today.getMonth()==4){
+
+setTimeout(()=>{
+document.getElementById("birthdayOverlay").classList.add("show");
+
+const music=document.getElementById("music");
+music.volume=0;
+music.play();
+
+let vol=0;
+const fade=setInterval(()=>{
+vol+=0.05;
+music.volume=vol;
+if(vol>=1)clearInterval(fade);
+},200);
+
+},2000);
+
 }
 
 </script>
