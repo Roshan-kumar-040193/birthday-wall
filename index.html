@@ -292,8 +292,27 @@ const initialPhotos=[
 "https://res.cloudinary.com/df3feu0pt/image/upload/v1779137975/PHOTO-2023-12-10-15-41-11_zysraq.jpg"
 ];
 
-initialPhotos.forEach(url=>{
-createNote("❤️ Memory",url);
+const birthdayMessages = [
+    "🎉 Happy Birthday Richa! May your smile stay forever ❤️",
+    "🥳 Another year prettier, wiser & more amazing!",
+    "🎂 Officially upgraded to a new level of awesome!",
+    "✨ You make life brighter just by existing.",
+    "😂 Warning: Cake calories don’t count today!",
+    "🌸 Stay magical, stay beautiful, stay YOU.",
+    "💖 Today the world celebrates its favorite person!",
+    "🎈 Born to shine, destined to slay!",
+    "🍰 Eat cake. Repeat. It’s your birthday.",
+    "❤️ You deserve happiness multiplied by infinity.",
+    "🎊 May your day be full of surprises & laughter!",
+    "🌟 Still younger than you’ll be next year 😄",
+    "🎁 Happiness looks good on you!",
+    "💫 Keep glowing like the star you are.",
+    "🥰 Life feels better because you’re in it.",
+    "🎉 Happy Birthday Queen! Rule your day 👑"
+];
+
+initialPhotos.forEach((url, index) => {
+    createNote(birthdayMessages[index], url);
 });
 
 /* ===== LOAD APPROVED POSTS ===== */
