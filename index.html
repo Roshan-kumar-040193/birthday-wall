@@ -19,6 +19,7 @@ overflow-x:hidden;
 .header-container {
 text-align: center;
 margin: 40px 0 20px 0;
+padding: 0 15px;
 }
 
 .title{
@@ -27,6 +28,12 @@ font-size:48px;
 margin: 0 0 15px 0;
 color: #2c2c2c;
 letter-spacing: -0.5px;
+}
+
+@media (max-width: 600px) {
+  .title {
+    font-size: 32px;
+  }
 }
 
 /* Aesthetic Countdown Styles */
@@ -43,6 +50,13 @@ backdrop-filter: blur(8px);
 border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
+@media (max-width: 480px) {
+  .countdown-container {
+    gap: 12px;
+    padding: 8px 16px;
+  }
+}
+
 .countdown-item {
 display: flex;
 flex-direction: column;
@@ -50,11 +64,23 @@ align-items: center;
 min-width: 50px;
 }
 
+@media (max-width: 480px) {
+  .countdown-item {
+    min-width: 40px;
+  }
+}
+
 .countdown-number {
 font-size: 30px;
 font-weight: bold;
 color: #c89f7b;
 line-height: 1;
+}
+
+@media (max-width: 480px) {
+  .countdown-number {
+    font-size: 22px;
+  }
 }
 
 .countdown-label {
@@ -65,10 +91,23 @@ letter-spacing: 1px;
 margin-top: 4px;
 }
 
+@media (max-width: 480px) {
+  .countdown-label {
+    font-size: 10px;
+  }
+}
+
 #wall{
 position:relative;
 width:100%;
-min-height:2500px;
+/* Min height scales significantly on mobile to give space vertically */
+min-height: 2800px; 
+}
+
+@media (max-width: 600px) {
+  #wall {
+    min-height: 4800px; /* Expands canvas length down so notes stack gracefully */
+  }
 }
 
 .note{
@@ -80,6 +119,15 @@ box-shadow:0 8px 20px rgba(0,0,0,.12);
 border-radius:2px;
 transition: transform .4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow .4s ease;
 will-change: transform;
+box-sizing: border-box;
+}
+
+/* Adjust card size slightly for tight mobile viewports */
+@media (max-width: 400px) {
+  .note {
+    width: 180px;
+    padding: 8px 8px 20px;
+  }
 }
 
 .note:hover{
@@ -97,6 +145,12 @@ border-radius: 1px;
 display: block;
 }
 
+@media (max-width: 400px) {
+  .note img {
+    height: 140px;
+  }
+}
+
 .message{
 text-align:center;
 margin-top:14px;
@@ -111,16 +165,16 @@ margin-bottom:6px;
 opacity: 0.9;
 }
 
-/* Glassmorphic Form Pin-Box Container */
+/* Responsive Sticky Form Pin-Box Container */
 .post-box{
 position:fixed;
 bottom:24px;
 left:50%;
 transform:translateX(-50%);
-background: rgba(255, 255, 255, 0.85);
+background: rgba(255, 255, 255, 0.92);
 padding:12px 18px;
 border-radius:20px;
-box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+box-shadow: 0 12px 40px rgba(0,0,0,0.16);
 backdrop-filter: blur(12px);
 -webkit-backdrop-filter: blur(12px);
 border: 1px solid rgba(255, 255, 255, 0.5);
@@ -128,6 +182,19 @@ z-index:100;
 display:flex;
 gap:12px;
 align-items:center;
+max-width: 90%;
+box-sizing: border-box;
+}
+
+/* Turns panel vertical on mobile screens to save space */
+@media (max-width: 768px) {
+  .post-box {
+    flex-direction: column;
+    width: 90%;
+    bottom: 12px;
+    padding: 14px;
+    gap: 8px;
+  }
 }
 
 textarea{
@@ -144,6 +211,13 @@ outline: none;
 transition: background 0.2s;
 }
 
+@media (max-width: 768px) {
+  textarea {
+    width: 100%;
+    height: 50px;
+  }
+}
+
 input[type="text"]{
 padding:10px;
 border:1px solid rgba(0,0,0,0.05);
@@ -156,9 +230,10 @@ outline: none;
 transition: background 0.2s;
 }
 
-textarea:focus, input[type="text"]:focus {
-background: #ffffff;
-border-color: rgba(200, 159, 123, 0.4);
+@media (max-width: 768px) {
+  input[type="text"] {
+    width: 100%;
+  }
 }
 
 /* Custom File Upload Styling wrapper */
@@ -166,6 +241,12 @@ border-color: rgba(200, 159, 123, 0.4);
 position: relative;
 display: inline-block;
 cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .file-upload-wrapper {
+    width: 100%;
+  }
 }
 
 .file-upload-label {
@@ -180,6 +261,12 @@ font-size: 14px;
 font-weight: 500;
 color: #555;
 transition: all 0.2s;
+}
+
+@media (max-width: 768px) {
+  .file-upload-label {
+    padding: 12px;
+  }
 }
 
 .file-upload-wrapper:hover .file-upload-label {
@@ -208,6 +295,13 @@ font-weight:600;
 cursor:pointer;
 transition: background 0.2s, transform 0.1s;
 box-shadow: 0 4px 12px rgba(200, 159, 123, 0.2);
+}
+
+@media (max-width: 768px) {
+  button {
+    width: 100%;
+    padding: 12px;
+  }
 }
 
 button:hover {
@@ -296,24 +390,42 @@ const paperColors=[
 
 let placed=[];
 
-function overlaps(x,y){
-for(let p of placed){
-if(Math.abs(p.x-x)<260 && Math.abs(p.y-y)<260)return true;
-}
-return false;
+// Responsive Overlap Buffer Thresholds
+function overlaps(x, y) {
+  const isMobile = window.innerWidth <= 600;
+  // Tighten collision targets on mobile so cards can settle closer safely
+  const horizontalBuffer = isMobile ? 200 : 260;
+  const verticalBuffer = isMobile ? 240 : 260;
+
+  for (let p of placed) {
+    if (Math.abs(p.x - x) < horizontalBuffer && Math.abs(p.y - y) < verticalBuffer) {
+      return true;
+    }
+  }
+  return false;
 }
 
-function randomPosition(){
-let x,y,tries=0;
-do{
-x=Math.random()*(window.innerWidth-260);
-y=Math.random()*2000+50;
-tries++;
-if(tries>100)break;
-}while(overlaps(x,y));
+function randomPosition() {
+  let x, y, tries = 0;
+  const isMobile = window.innerWidth <= 600;
+  
+  // Set accurate card limits based on active layout size
+  const cardWidth = isMobile ? (window.innerWidth <= 400 ? 180 : 230) : 260;
+  const maxWidth = window.innerWidth - cardWidth;
+  
+  // Stretch vertical height profile on mobile so items scatter over a larger list depth
+  const verticalSpan = isMobile ? 4400 : 2400;
 
-placed.push({x,y});
-return{x,y};
+  do {
+    // Leave a slight structural margin on edges
+    x = Math.random() * (maxWidth - 20) + 10;
+    y = Math.random() * verticalSpan + 60;
+    tries++;
+    if (tries > 300) break; // Extended search depth to catch cleaner spots
+  } while (overlaps(x, y));
+
+  placed.push({ x, y });
+  return { x, y };
 }
 
 /* ===== AESTHETIC COUNTDOWN TIMER ===== */
@@ -355,37 +467,31 @@ function updateFileName(input) {
 }
 
 function createNote(text,imageURL){
+  const note=document.createElement("div");
+  note.className="note";
 
-const note=document.createElement("div");
-note.className="note";
+  const rotate=(Math.random()*12)-6;
+  note.style.transform=`rotate(${rotate}deg)`;
+  note.style.fontFamily=fonts[Math.floor(Math.random()*fonts.length)];
+  note.style.background=paperColors[Math.floor(Math.random()*paperColors.length)];
 
-const rotate=(Math.random()*12)-6;
-note.style.transform=`rotate(${rotate}deg)`;
+  const pos=randomPosition();
+  note.style.left=pos.x+"px";
+  note.style.top=pos.y+"px";
 
-note.style.fontFamily=
-fonts[Math.floor(Math.random()*fonts.length)];
+  // Scale relative size elegantly for tighter views
+  const baseSize = window.innerWidth <= 400 ? 15 : 18;
+  const size=baseSize+Math.random()*5;
+  const color=inkColors[Math.floor(Math.random()*inkColors.length)];
 
-note.style.background=
-paperColors[Math.floor(Math.random()*paperColors.length)];
+  const content=`
+  <div class="message" style="font-size:${size}px;color:${color};">
+  ${text}
+  </div>
+  `;
 
-const pos=randomPosition();
-note.style.left=pos.x+"px";
-note.style.top=pos.y+"px";
-
-const size=18+Math.random()*6;
-const color=inkColors[Math.floor(Math.random()*inkColors.length)];
-
-const content=`
-<div class="message" style="font-size:${size}px;color:${color};">
-${text}
-</div>
-`;
-
-note.innerHTML=imageURL
-? `<img src="${imageURL}">${content}`
-: content;
-
-document.getElementById("wall").appendChild(note);
+  note.innerHTML=imageURL ? `<img src="${imageURL}">${content}` : content;
+  document.getElementById("wall").appendChild(note);
 }
 
 function createFirebaseNote(text,imageURL){
@@ -401,7 +507,8 @@ function createFirebaseNote(text,imageURL){
   note.style.left=pos.x+"px";
   note.style.top=pos.y+"px";
 
-  const size=18+Math.random()*6;
+  const baseSize = window.innerWidth <= 400 ? 15 : 18;
+  const size=baseSize+Math.random()*5;
   const color=inkColors[Math.floor(Math.random()*inkColors.length)];
 
   const content=`
