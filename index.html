@@ -5,7 +5,6 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Caveat&family=Indie+Flower&family=Patrick+Hand&family=Shadows+Into+Light&family=Gloria+Hallelujah&display=swap" rel="stylesheet">
 
@@ -88,7 +87,7 @@ padding:8px;
 resize:none;
 }
 
-input[type="text"],input[type="tel"]{
+input[type="text"]{
 padding:8px;
 border:none;
 border-radius:8px;
@@ -114,12 +113,8 @@ cursor:pointer;
 
 <div id="wall"></div>
 
-<!-- POST BOX -->
-
 <div class="post-box">
-<input id="username" placeholder="Your name ❤️">
-<input id="phone" placeholder="Phone number 📱">
-<button onclick="login()">Verify</button>
+<input id="username" type="text" placeholder="Your name ❤️">
 <textarea id="message" placeholder="Leave a memory..."></textarea>
 <input type="file" id="imageInput">
 <button onclick="addPost()">Pin Memory</button>
@@ -139,32 +134,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.firestore();
-const auth = firebase.auth();
-
-/* ===== PHONE AUTH ===== */
-
-window.recaptchaVerifier =
-new firebase.auth.RecaptchaVerifier('phone',{
-size:'invisible'
-});
-
-let confirmationResult=null;
-
-async function login(){
-
-const phone=document.getElementById("phone").value;
-
-confirmationResult=
-await auth.signInWithPhoneNumber(phone,window.recaptchaVerifier);
-
-const code=prompt("Enter OTP");
-
-await confirmationResult.confirm(code);
-
-alert("Phone verified ✅");
-}
 
 /* ===== WALL SYSTEM ===== */
 
@@ -209,7 +179,7 @@ return{x,y};
 function createNote(text,imageURL){
 
 const note=document.createElement("div");
-note.className="note firebase-note";
+note.className="note"; // Removed 'firebase-note' tag from initial photos to keep them permanent
 
 const rotate=(Math.random()*12)-6;
 note.style.transform=`rotate(${rotate}deg)`;
@@ -240,15 +210,36 @@ note.innerHTML=imageURL
 document.getElementById("wall").appendChild(note);
 }
 
+// Separate function for rendering firebase-specific notes so we can safely wipe them on snapshot reload
+function createFirebaseNote(text,imageURL){
+  const note=document.createElement("div");
+  note.className="note firebase-note"; // Uses firebase-note class here so they can be cleaned on updates
+
+  const rotate=(Math.random()*12)-6;
+  note.style.transform=`rotate(${rotate}deg)`;
+  note.style.fontFamily=fonts[Math.floor(Math.random()*fonts.length)];
+  note.style.background=paperColors[Math.floor(Math.random()*paperColors.length)];
+
+  const pos=randomPosition();
+  note.style.left=pos.x+"px";
+  note.style.top=pos.y+"px";
+
+  const size=18+Math.random()*8;
+  const color=inkColors[Math.floor(Math.random()*inkColors.length)];
+
+  const content=`
+  <div class="message" style="font-size:${size}px;color:${color};">
+  ${text}
+  </div>
+  `;
+
+  note.innerHTML=imageURL ? `<img src="${imageURL}">${content}` : content;
+  document.getElementById("wall").appendChild(note);
+}
+
 /* ===== ADD POST ===== */
 
 async function addPost(){
-
-if(!auth.currentUser){
-alert("Verify phone number first 📱");
-return;
-}
-
 const name=document.getElementById("username").value||"Someone";
 const msg=document.getElementById("message").value;
 const file=document.getElementById("imageInput").files[0];
@@ -265,17 +256,18 @@ reader.readAsDataURL(file);
 });
 }
 
+// Saves straight to database with approved set to false
 await db.collection("messages").add({
 name:name,
 message:msg,
 image:imageURL,
 approved:false,
-phone:auth.currentUser.phoneNumber,
 timestamp:Date.now()
 });
 
-alert("✨ Memory sent for approval!");
+alert("✨ Your memory has been sent for approval!");
 
+document.getElementById("username").value="";
 document.getElementById("message").value="";
 document.getElementById("imageInput").value="";
 }
@@ -311,10 +303,12 @@ db.collection("messages")
 .orderBy("timestamp","asc")
 .onSnapshot(snapshot=>{
 
+// Wipe out only dynamically loaded database notes to avoid duplicate overlaps
 document.querySelectorAll(".firebase-note")
 .forEach(n=>n.remove());
 
-placed=[];
+// Reset placement coordinates tracking array back to initial hardcoded photos layout size
+placed = placed.slice(0, initialPhotos.length);
 
 snapshot.forEach(doc=>{
 const data=doc.data();
@@ -324,7 +318,7 @@ const finalText=`
 ${data.message}
 `;
 
-createNote(finalText,data.image);
+createFirebaseNote(finalText,data.image);
 });
 });
 
