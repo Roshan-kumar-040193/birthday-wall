@@ -1,231 +1,319 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Birthday Wall 🎂</title>
+<title>Richa's Birthday Wall ✨</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Caveat&family=Patrick+Hand&family=Indie+Flower&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Caveat&family=Indie+Flower&family=Patrick+Hand&family=Shadows+Into+Light&family=Gloria+Hallelujah&display=swap" rel="stylesheet">
 
 <style>
-
 body{
 margin:0;
-background:transparent;
-font-family:sans-serif;
+background:#f3efe8;
 overflow-x:hidden;
 }
 
-/* ===== ROPE ===== */
-
-.rope{
-position:fixed;
-top:40px;
-left:0;
-width:100%;
-height:2px;
-background:black;
-z-index:5;
+.title{
+text-align:center;
+font-family:'Playfair Display';
+font-size:48px;
+margin:40px 0;
 }
 
-.hanging{
-position:fixed;
-top:42px;
-display:flex;
-gap:30px;
-width:100%;
-justify-content:center;
-z-index:6;
-}
-
-.hanging img{
-height:120px;
-transform:rotate(-3deg);
-box-shadow:0 6px 12px rgba(0,0,0,.3);
-}
-
-/* ===== WALL ===== */
-
-.wall{
+#wall{
 position:relative;
 width:100%;
-height:3000px;
-}
-
-/* ===== POLAROID ===== */
-
-.polaroid{
-position:absolute;
-width:220px;
-background:white;
-padding:10px;
-padding-bottom:40px;
-box-shadow:0 10px 20px rgba(0,0,0,.25);
-border-radius:4px;
-transition:.3s;
-}
-
-.polaroid:hover{
-transform:scale(1.08);
-z-index:10;
-}
-
-.polaroid img{
-width:100%;
+min-height:2500px;
 }
 
 .note{
-margin-top:8px;
-font-size:20px;
-white-space:pre-line;
+position:absolute;
+width:230px;
+padding:10px 10px 35px;
+background:white;
+box-shadow:0 10px 25px rgba(0,0,0,.18);
+border-radius:4px;
+transition:.35s;
 }
 
-/* ===== MESSAGE BOX ===== */
+.note:hover{
+transform:scale(1.08) rotate(0deg)!important;
+z-index:10;
+box-shadow:0 18px 40px rgba(0,0,0,.35);
+}
 
-.formBox{
+.note img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:2px;
+}
+
+.message{
+text-align:center;
+margin-top:15px;
+line-height:1.2;
+}
+
+.username{
+font-size:20px;
+margin-bottom:6px;
+}
+
+.post-box{
 position:fixed;
-top:120px;
+bottom:20px;
 left:50%;
 transform:translateX(-50%);
 background:white;
-padding:20px;
-box-shadow:0 10px 25px rgba(0,0,0,.2);
-z-index:10;
-border-radius:10px;
+padding:15px;
+border-radius:15px;
+box-shadow:0 8px 30px rgba(0,0,0,.2);
+z-index:100;
+display:flex;
+gap:10px;
+align-items:center;
 }
 
-input,textarea{
-width:250px;
-margin-top:10px;
+textarea{
+width:240px;
+height:55px;
+border:none;
+background:#f6f6f6;
+border-radius:8px;
 padding:8px;
+resize:none;
+}
+
+input[type="text"],input[type="tel"]{
+padding:8px;
+border:none;
+border-radius:8px;
+background:#f6f6f6;
+width:160px;
 }
 
 button{
-margin-top:10px;
-padding:10px;
+padding:10px 18px;
+border:none;
+border-radius:20px;
+background:#c89f7b;
+color:white;
+font-weight:bold;
 cursor:pointer;
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="rope"></div>
+<h1 class="title">Richa's Birthday Wall ✨</h1>
 
-<div class="hanging">
-<img src="img1.jpg">
-<img src="img2.jpg">
-<img src="img3.jpg">
+<div id="wall"></div>
+
+<!-- POST BOX -->
+
+<div class="post-box">
+<input id="username" placeholder="Your name ❤️">
+<input id="phone" placeholder="Phone number 📱">
+<button onclick="login()">Verify</button>
+<textarea id="message" placeholder="Leave a memory..."></textarea>
+<input type="file" id="imageInput">
+<button onclick="addPost()">Pin Memory</button>
 </div>
-
-<div class="formBox">
-<h3>Leave a Birthday Message 🎂</h3>
-
-<input id="name" placeholder="Your Name">
-<br>
-<textarea id="message" placeholder="Write something beautiful..."></textarea>
-<br>
-<button onclick="submitMessage()">Send ❤️</button>
-
-<p id="status"></p>
-
-</div>
-
-<div class="wall" id="wall"></div>
-
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
 
-/* ===== PASTE YOUR FIREBASE CONFIG HERE ===== */
+/* ================= FIREBASE INIT ================= */
 
 const firebaseConfig = {
- apiKey: "PASTE",
- authDomain: "PASTE",
- projectId: "PASTE",
+  apiKey: "AIzaSyC6SCVxBj8e1erraHSZYNIbUQ9rd_ZIVqE",
+  authDomain: "birthdaywall-5c717.firebaseapp.com",
+  projectId: "birthdaywall-5c717",
+  storageBucket: "birthdaywall-5c717.firebasestorage.app",
+  messagingSenderId: "690240797364",
+  appId: "1:690240797364:web:e6863fa5ac7bcecaac75e1"
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.firestore();
+const auth = firebase.auth();
 
-/* ===== RANDOM STYLE HELPERS ===== */
+/* ===== PHONE AUTH ===== */
 
-const fonts = [
-"Caveat",
-"Patrick Hand",
-"Indie Flower"
-];
+window.recaptchaVerifier =
+new firebase.auth.RecaptchaVerifier('phone',{
+size:'invisible'
+});
 
-function random(min,max){
-return Math.random()*(max-min)+min;
+let confirmationResult=null;
+
+async function login(){
+
+const phone=document.getElementById("phone").value;
+
+confirmationResult=
+await auth.signInWithPhoneNumber(phone,window.recaptchaVerifier);
+
+const code=prompt("Enter OTP");
+
+await confirmationResult.confirm(code);
+
+alert("Phone verified ✅");
 }
 
-/* ===== CREATE POLAROID ===== */
+/* ===== WALL SYSTEM ===== */
 
-function createPolaroid(data){
+const fonts=[
+"Caveat",
+"Indie Flower",
+"Patrick Hand",
+"Shadows Into Light",
+"Gloria Hallelujah"
+];
 
-const wall = document.getElementById("wall");
+const inkColors=[
+"#1f2937","#1e3a8a","#14532d","#7f1d1d","#312e81","#3f3f46"
+];
 
-const div = document.createElement("div");
-div.className="polaroid";
+const paperColors=[
+"#fffdfa","#fef9f3","#fff7ed","#fafaf9","#f8fafc"
+];
 
-div.style.top=random(200,2800)+"px";
-div.style.left=random(5,80)+"%";
-div.style.transform=`rotate(${random(-12,12)}deg)`;
+let placed=[];
 
-div.innerHTML=`
-<div class="note"
-style="font-family:${fonts[Math.floor(Math.random()*fonts.length)]}">
-<b>${data.name} said —</b>
-${data.message}
+function overlaps(x,y){
+for(let p of placed){
+if(Math.abs(p.x-x)<260 && Math.abs(p.y-y)<260)return true;
+}
+return false;
+}
+
+function randomPosition(){
+let x,y,tries=0;
+do{
+x=Math.random()*(window.innerWidth-260);
+y=Math.random()*2000+50;
+tries++;
+if(tries>100)break;
+}while(overlaps(x,y));
+
+placed.push({x,y});
+return{x,y};
+}
+
+function createNote(text,imageURL){
+
+const note=document.createElement("div");
+note.className="note firebase-note";
+
+const rotate=(Math.random()*12)-6;
+note.style.transform=`rotate(${rotate}deg)`;
+
+note.style.fontFamily=
+fonts[Math.floor(Math.random()*fonts.length)];
+
+note.style.background=
+paperColors[Math.floor(Math.random()*paperColors.length)];
+
+const pos=randomPosition();
+note.style.left=pos.x+"px";
+note.style.top=pos.y+"px";
+
+const size=18+Math.random()*8;
+const color=inkColors[Math.floor(Math.random()*inkColors.length)];
+
+const content=`
+<div class="message" style="font-size:${size}px;color:${color};">
+${text}
 </div>
 `;
 
-wall.appendChild(div);
+note.innerHTML=imageURL
+? `<img src="${imageURL}">${content}`
+: content;
+
+document.getElementById("wall").appendChild(note);
 }
 
-/* ===== LOAD APPROVED MESSAGES ===== */
+/* ===== ADD POST ===== */
+
+async function addPost(){
+
+if(!auth.currentUser){
+alert("Verify phone number first 📱");
+return;
+}
+
+const name=document.getElementById("username").value||"Someone";
+const msg=document.getElementById("message").value;
+const file=document.getElementById("imageInput").files[0];
+
+if(!msg && !file) return;
+
+let imageURL=null;
+
+if(file){
+imageURL=await new Promise(resolve=>{
+const reader=new FileReader();
+reader.onload=e=>resolve(e.target.result);
+reader.readAsDataURL(file);
+});
+}
+
+await db.collection("messages").add({
+name:name,
+message:msg,
+image:imageURL,
+approved:false,
+phone:auth.currentUser.phoneNumber,
+timestamp:Date.now()
+});
+
+alert("✨ Memory sent for approval!");
+
+document.getElementById("message").value="";
+document.getElementById("imageInput").value="";
+}
+
+/* ===== INITIAL PHOTOS ===== */
+
+const initialPhotos=[
+"https://res.cloudinary.com/df3feu0pt/image/upload/v1779137978/PHOTO-2025-01-14-13-49-01_alcwm6.jpg"
+];
+
+initialPhotos.forEach(url=>{
+createNote("❤️ Memory",url);
+});
+
+/* ===== LOAD APPROVED POSTS ===== */
 
 db.collection("messages")
 .where("approved","==",true)
 .orderBy("timestamp","asc")
 .onSnapshot(snapshot=>{
-document.getElementById("wall").innerHTML="";
+
+document.querySelectorAll(".firebase-note")
+.forEach(n=>n.remove());
+
+placed=[];
+
 snapshot.forEach(doc=>{
-createPolaroid(doc.data());
+const data=doc.data();
+
+const finalText=`
+<div class="username"><b>${data.name}</b> said —</div>
+${data.message}
+`;
+
+createNote(finalText,data.image);
 });
 });
-
-/* ===== SUBMIT MESSAGE ===== */
-
-function submitMessage(){
-
-const name=document.getElementById("name").value.trim();
-const message=document.getElementById("message").value.trim();
-
-if(!name || !message){
-alert("Fill everything ❤️");
-return;
-}
-
-db.collection("messages").add({
-name,
-message,
-approved:false,
-timestamp:Date.now()
-});
-
-document.getElementById("status").innerText=
-"✨ Message sent! Waiting for approval.";
-
-document.getElementById("name").value="";
-document.getElementById("message").value="";
-}
 
 </script>
-
 </body>
 </html>
