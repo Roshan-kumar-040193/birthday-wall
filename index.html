@@ -97,34 +97,28 @@ margin-top: 4px;
   }
 }
 
-/* DESKTOP STYLING */
+/* --- WALL LAYOUT DESKTOP --- */
 #wall{
 position:relative;
 width:100%;
-min-height: 2500px; 
+min-height: 2200px; 
 }
 
-/* MOBILE STYLING: Switch from absolute messy space to a gorgeous, fluid grid layout */
-@media (max-width: 600px) {
+/* --- WALL LAYOUT MOBILE: No overlap masonry layout --- */
+@media (max-width: 768px) {
   #wall {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    padding: 20px 12px 160px 12px; /* Extra padding at bottom so sticky form doesn't cover content */
-    box-sizing: border-box;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+    gap: 20px !important;
+    padding: 30px 16px 180px 16px !important;
+    box-sizing: border-box !important;
     min-height: auto !important; 
-  }
-}
-
-@media (max-width: 380px) {
-  #wall {
-    grid-template-columns: 1fr; /* Stack neatly into 1 clean column on extremely small devices */
   }
 }
 
 .note{
 position:absolute;
-width:230px;
+width:240px;
 padding:12px 12px 30px;
 background:white;
 box-shadow:0 8px 20px rgba(0,0,0,.12);
@@ -134,20 +128,20 @@ will-change: transform;
 box-sizing: border-box;
 }
 
-/* Override absolute positioning constraints cleanly on mobile grids */
-@media (max-width: 600px) {
+/* Remove CSS absolute positioning vectors safely inside mobile grid viewports */
+@media (max-width: 768px) {
   .note {
     position: relative !important;
     left: auto !important;
     top: auto !important;
     width: 100% !important;
-    margin: 0 auto;
-    padding: 10px 10px 24px;
+    margin: 0 !important;
+    padding: 10px 10px 20px !important;
   }
 }
 
 .note:hover{
-transform:scale(1.05) rotate(0deg)!important;
+transform:scale(1.06) rotate(0deg)!important;
 z-index:10;
 box-shadow:0 20px 38px rgba(0,0,0,.24);
 }
@@ -161,9 +155,9 @@ border-radius: 1px;
 display: block;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .note img {
-    height: 150px; /* Bring image height down slightly on smaller viewport nodes */
+    height: 150px;
   }
 }
 
@@ -407,9 +401,9 @@ const paperColors=[
 let placed=[];
 
 function overlaps(x, y) {
-  // Desktop collision rule parameters
+  // Desktop spacing constraints (250px buffer zones)
   for (let p of placed) {
-    if (Math.abs(p.x - x) < 260 && Math.abs(p.y - y) < 260) {
+    if (Math.abs(p.x - x) < 250 && Math.abs(p.y - y) < 250) {
       return true;
     }
   }
@@ -418,13 +412,14 @@ function overlaps(x, y) {
 
 function randomPosition() {
   let x, y, tries = 0;
-  const maxWidth = window.innerWidth - 260;
+  // Always use standard desktop bounds here. CSS overrides layout coordinates on mobile automatically.
+  const maxWidth = Math.max(window.innerWidth, 1200) - 260;
 
   do {
     x = Math.random() * (maxWidth - 40) + 20;
-    y = Math.random() * 2100 + 60;
+    y = Math.random() * 1800 + 40;
     tries++;
-    if (tries > 300) break;
+    if (tries > 400) break;
   } while (overlaps(x, y));
 
   placed.push({ x, y });
@@ -478,15 +473,12 @@ function createNote(text,imageURL){
   note.style.fontFamily=fonts[Math.floor(Math.random()*fonts.length)];
   note.style.background=paperColors[Math.floor(Math.random()*paperColors.length)];
 
-  // Position mathematically if viewing on desktop desktop
-  if (window.innerWidth > 600) {
-    const pos=randomPosition();
-    note.style.left=pos.x+"px";
-    note.style.top=pos.y+"px";
-  }
+  // Generate coordinates safely. If screen is mobile size, CSS grid overrides these layout declarations.
+  const pos=randomPosition();
+  note.style.left=pos.x+"px";
+  note.style.top=pos.y+"px";
 
-  const baseSize = window.innerWidth <= 600 ? 15 : 18;
-  const size=baseSize+Math.random()*4;
+  const size=18+Math.random()*4;
   const color=inkColors[Math.floor(Math.random()*inkColors.length)];
 
   const content=`
@@ -508,14 +500,11 @@ function createFirebaseNote(text,imageURL){
   note.style.fontFamily=fonts[Math.floor(Math.random()*fonts.length)];
   note.style.background=paperColors[Math.floor(Math.random()*paperColors.length)];
 
-  if (window.innerWidth > 600) {
-    const pos=randomPosition();
-    note.style.left=pos.x+"px";
-    note.style.top=pos.y+"px";
-  }
+  const pos=randomPosition();
+  note.style.left=pos.x+"px";
+  note.style.top=pos.y+"px";
 
-  const baseSize = window.innerWidth <= 600 ? 15 : 18;
-  const size=baseSize+Math.random()*4;
+  const size=18+Math.random()*4;
   const color=inkColors[Math.floor(Math.random()*inkColors.length)];
 
   const content=`
