@@ -97,16 +97,28 @@ margin-top: 4px;
   }
 }
 
+/* DESKTOP STYLING */
 #wall{
 position:relative;
 width:100%;
-/* Min height scales significantly on mobile to give space vertically */
-min-height: 2800px; 
+min-height: 2500px; 
 }
 
+/* MOBILE STYLING: Switch from absolute messy space to a gorgeous, fluid grid layout */
 @media (max-width: 600px) {
   #wall {
-    min-height: 4800px; /* Expands canvas length down so notes stack gracefully */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 20px 12px 160px 12px; /* Extra padding at bottom so sticky form doesn't cover content */
+    box-sizing: border-box;
+    min-height: auto !important; 
+  }
+}
+
+@media (max-width: 380px) {
+  #wall {
+    grid-template-columns: 1fr; /* Stack neatly into 1 clean column on extremely small devices */
   }
 }
 
@@ -122,16 +134,20 @@ will-change: transform;
 box-sizing: border-box;
 }
 
-/* Adjust card size slightly for tight mobile viewports */
-@media (max-width: 400px) {
+/* Override absolute positioning constraints cleanly on mobile grids */
+@media (max-width: 600px) {
   .note {
-    width: 180px;
-    padding: 8px 8px 20px;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    margin: 0 auto;
+    padding: 10px 10px 24px;
   }
 }
 
 .note:hover{
-transform:scale(1.08) rotate(0deg)!important;
+transform:scale(1.05) rotate(0deg)!important;
 z-index:10;
 box-shadow:0 20px 38px rgba(0,0,0,.24);
 }
@@ -145,9 +161,9 @@ border-radius: 1px;
 display: block;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 600px) {
   .note img {
-    height: 140px;
+    height: 150px; /* Bring image height down slightly on smaller viewport nodes */
   }
 }
 
@@ -171,7 +187,7 @@ position:fixed;
 bottom:24px;
 left:50%;
 transform:translateX(-50%);
-background: rgba(255, 255, 255, 0.92);
+background: rgba(255, 255, 255, 0.95);
 padding:12px 18px;
 border-radius:20px;
 box-shadow: 0 12px 40px rgba(0,0,0,0.16);
@@ -390,15 +406,10 @@ const paperColors=[
 
 let placed=[];
 
-// Responsive Overlap Buffer Thresholds
 function overlaps(x, y) {
-  const isMobile = window.innerWidth <= 600;
-  // Tighten collision targets on mobile so cards can settle closer safely
-  const horizontalBuffer = isMobile ? 200 : 260;
-  const verticalBuffer = isMobile ? 240 : 260;
-
+  // Desktop collision rule parameters
   for (let p of placed) {
-    if (Math.abs(p.x - x) < horizontalBuffer && Math.abs(p.y - y) < verticalBuffer) {
+    if (Math.abs(p.x - x) < 260 && Math.abs(p.y - y) < 260) {
       return true;
     }
   }
@@ -407,21 +418,13 @@ function overlaps(x, y) {
 
 function randomPosition() {
   let x, y, tries = 0;
-  const isMobile = window.innerWidth <= 600;
-  
-  // Set accurate card limits based on active layout size
-  const cardWidth = isMobile ? (window.innerWidth <= 400 ? 180 : 230) : 260;
-  const maxWidth = window.innerWidth - cardWidth;
-  
-  // Stretch vertical height profile on mobile so items scatter over a larger list depth
-  const verticalSpan = isMobile ? 4400 : 2400;
+  const maxWidth = window.innerWidth - 260;
 
   do {
-    // Leave a slight structural margin on edges
-    x = Math.random() * (maxWidth - 20) + 10;
-    y = Math.random() * verticalSpan + 60;
+    x = Math.random() * (maxWidth - 40) + 20;
+    y = Math.random() * 2100 + 60;
     tries++;
-    if (tries > 300) break; // Extended search depth to catch cleaner spots
+    if (tries > 300) break;
   } while (overlaps(x, y));
 
   placed.push({ x, y });
@@ -470,18 +473,20 @@ function createNote(text,imageURL){
   const note=document.createElement("div");
   note.className="note";
 
-  const rotate=(Math.random()*12)-6;
+  const rotate=(Math.random()*10)-5;
   note.style.transform=`rotate(${rotate}deg)`;
   note.style.fontFamily=fonts[Math.floor(Math.random()*fonts.length)];
   note.style.background=paperColors[Math.floor(Math.random()*paperColors.length)];
 
-  const pos=randomPosition();
-  note.style.left=pos.x+"px";
-  note.style.top=pos.y+"px";
+  // Position mathematically if viewing on desktop desktop
+  if (window.innerWidth > 600) {
+    const pos=randomPosition();
+    note.style.left=pos.x+"px";
+    note.style.top=pos.y+"px";
+  }
 
-  // Scale relative size elegantly for tighter views
-  const baseSize = window.innerWidth <= 400 ? 15 : 18;
-  const size=baseSize+Math.random()*5;
+  const baseSize = window.innerWidth <= 600 ? 15 : 18;
+  const size=baseSize+Math.random()*4;
   const color=inkColors[Math.floor(Math.random()*inkColors.length)];
 
   const content=`
@@ -498,17 +503,19 @@ function createFirebaseNote(text,imageURL){
   const note=document.createElement("div");
   note.className="note firebase-note";
 
-  const rotate=(Math.random()*12)-6;
+  const rotate=(Math.random()*10)-5;
   note.style.transform=`rotate(${rotate}deg)`;
   note.style.fontFamily=fonts[Math.floor(Math.random()*fonts.length)];
   note.style.background=paperColors[Math.floor(Math.random()*paperColors.length)];
 
-  const pos=randomPosition();
-  note.style.left=pos.x+"px";
-  note.style.top=pos.y+"px";
+  if (window.innerWidth > 600) {
+    const pos=randomPosition();
+    note.style.left=pos.x+"px";
+    note.style.top=pos.y+"px";
+  }
 
-  const baseSize = window.innerWidth <= 400 ? 15 : 18;
-  const size=baseSize+Math.random()*5;
+  const baseSize = window.innerWidth <= 600 ? 15 : 18;
+  const size=baseSize+Math.random()*4;
   const color=inkColors[Math.floor(Math.random()*inkColors.length)];
 
   const content=`
